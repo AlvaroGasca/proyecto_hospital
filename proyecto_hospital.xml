@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+- phpMyAdmin XML Dump
+- version 5.2.0
+- https://www.phpmyadmin.net
+-
+- Servidor: localhost
+- Tiempo de generación: 02-05-2023 a las 08:18:01
+- Versión del servidor: 10.4.27-MariaDB
+- Versión de PHP: 8.1.12
+-->
+
+<pma_xml_export version="1.0" xmlns:pma="https://www.phpmyadmin.net/some_doc_url/">
+    <!--
+    - Structure schemas
+    -->
+    <pma:structure_schemas>
+        <pma:database name="proyecto_hospital" collation="utf8mb4_general_ci" charset="utf8mb4">
+            <pma:table name="Cama">
+                CREATE TABLE `Cama` (
+                  `numeroCama` int(11) NOT NULL,
+                  `disponible` tinyint(1) DEFAULT NULL,
+                  `paciente_id` int(11) DEFAULT NULL,
+                  PRIMARY KEY (`numeroCama`),
+                  KEY `paciente_id` (`paciente_id`),
+                  CONSTRAINT `cama_ibfk_1` FOREIGN KEY (`paciente_id`) REFERENCES `Paciente` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            </pma:table>
+            <pma:table name="Historial">
+                CREATE TABLE `Historial` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `paciente_id` int(11) NOT NULL,
+                  `medico_id` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `paciente_id` (`paciente_id`),
+                  KEY `medico_id` (`medico_id`),
+                  CONSTRAINT `historial_ibfk_1` FOREIGN KEY (`paciente_id`) REFERENCES `Paciente` (`id`),
+                  CONSTRAINT `historial_ibfk_2` FOREIGN KEY (`medico_id`) REFERENCES `Medico` (`codigo`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            </pma:table>
+            <pma:table name="Historial_Ingreso">
+                CREATE TABLE `Historial_Ingreso` (
+                  `historial_id` int(11) NOT NULL,
+                  `ingreso_id` int(11) NOT NULL,
+                  KEY `historial_id` (`historial_id`),
+                  KEY `ingreso_id` (`ingreso_id`),
+                  CONSTRAINT `historial_ingreso_ibfk_1` FOREIGN KEY (`historial_id`) REFERENCES `Historial` (`id`),
+                  CONSTRAINT `historial_ingreso_ibfk_2` FOREIGN KEY (`ingreso_id`) REFERENCES `Ingreso` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            </pma:table>
+            <pma:table name="Hospital">
+                CREATE TABLE `Hospital` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `nombre` varchar(50) DEFAULT NULL,
+                  `medico_codigo` int(11) DEFAULT NULL,
+                  `paciente_id` int(11) DEFAULT NULL,
+                  `ingreso_id` int(11) DEFAULT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `medico_codigo` (`medico_codigo`),
+                  KEY `paciente_id` (`paciente_id`),
+                  KEY `ingreso_id` (`ingreso_id`),
+                  CONSTRAINT `hospital_ibfk_1` FOREIGN KEY (`medico_codigo`) REFERENCES `Medico` (`codigo`),
+                  CONSTRAINT `hospital_ibfk_2` FOREIGN KEY (`paciente_id`) REFERENCES `Paciente` (`id`),
+                  CONSTRAINT `hospital_ibfk_3` FOREIGN KEY (`ingreso_id`) REFERENCES `Ingreso` (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            </pma:table>
+            <pma:table name="Ingreso">
+                CREATE TABLE `Ingreso` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `numero_ingreso` int(11) NOT NULL,
+                  `fecha_ingreso` date NOT NULL,
+                  `fecha_alta` date DEFAULT NULL,
+                  `paciente_id` int(11) NOT NULL,
+                  `medico_id` int(11) NOT NULL,
+                  `cama_id` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `numero_ingreso` (`numero_ingreso`),
+                  KEY `paciente_id` (`paciente_id`),
+                  KEY `medico_id` (`medico_id`),
+                  KEY `cama_id` (`cama_id`),
+                  CONSTRAINT `ingreso_ibfk_1` FOREIGN KEY (`paciente_id`) REFERENCES `Paciente` (`id`),
+                  CONSTRAINT `ingreso_ibfk_2` FOREIGN KEY (`medico_id`) REFERENCES `Medico` (`codigo`),
+                  CONSTRAINT `ingreso_ibfk_3` FOREIGN KEY (`cama_id`) REFERENCES `Cama` (`numeroCama`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            </pma:table>
+            <pma:table name="Medico">
+                CREATE TABLE `Medico` (
+                  `codigo` int(11) NOT NULL,
+                  `nombre` varchar(50) NOT NULL,
+                  `apellido` varchar(50) NOT NULL,
+                  `especialidad` enum(&#039;Alergología&#039;,&#039;Anestesiología_Reanimación&#039;,&#039;AparatoDigestivo&#039;,&#039;Cardiología&#039;,&#039;EndocrinologíaNutrición&#039;,&#039;Geriatría&#039;,&#039;HematologíaHemoterapia&#039;,&#039;MedicinaEducaciónFísicaDeporte&#039;,&#039;MedicinaEspacial&#039;,&#039;MedicinaIntensiva&#039;,&#039;MedicinaInterna&#039;,&#039;MedicinaLegalForense&#039;,&#039;MedicinaPreventivaSaludPublica&#039;,&#039;MedicinaTrabajo&#039;,&#039;Nefrología&#039;,&#039;Neumología&#039;,&#039;Neurología&#039;,&#039;NeurofisiologíaClínica&#039;,&#039;OncologíaMédica&#039;,&#039;OncologíaRadioterápica&#039;,&#039;Pediatría&#039;,&#039;Psiquiatría&#039;,&#039;Rehabilitación&#039;,&#039;Reumatología&#039;,&#039;MedicinaFamiliarComunitaria&#039;,&#039;CirugíaCardiovascular&#039;,&#039;CirugíaGeneralAparatoDigestivo&#039;,&#039;CirugíaOralMaxilofacial&#039;,&#039;CirugíaOrtopédicaTraumatología&#039;,&#039;CirugíaPediátrica&#039;,&#039;CirugíaPlásticaEstéticaReparadora&#039;,&#039;CirugíaTorácica&#039;,&#039;Neurocirugía&#039;,&#039;AngiologíaCirugíaVascular&#039;,&#039;DermatologíaMédicoquirúrgicaVenereología&#039;,&#039;ObstetriciaGinecología&#039;,&#039;Oftalmología&#039;,&#039;Otorrinolaringología&#039;,&#039;Urología&#039;,&#039;AnálisisClínicos&#039;,&#039;AnatomíaPatológica&#039;,&#039;BioquímicaClínica&#039;,&#039;FarmacologíaClínica&#039;,&#039;Inmunología&#039;,&#039;MedicinaNuclear&#039;,&#039;MicrobiologíaParasitología&#039;,&#039;Radiodiagnóstico&#039;) NOT NULL,
+                  PRIMARY KEY (`codigo`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            </pma:table>
+            <pma:table name="Paciente">
+                CREATE TABLE `Paciente` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `nombre` varchar(45) NOT NULL,
+                  `edad` int(11) NOT NULL,
+                  `genero` varchar(10) NOT NULL,
+                  `direccion` varchar(100) NOT NULL,
+                  `telefono` varchar(20) NOT NULL,
+                  `estado` varchar(45) NOT NULL,
+                  `medico_codigo` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `medico_codigo` (`medico_codigo`),
+                  CONSTRAINT `paciente_ibfk_1` FOREIGN KEY (`medico_codigo`) REFERENCES `Medico` (`codigo`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            </pma:table>
+        </pma:database>
+    </pma:structure_schemas>
+
+    <!--
+    - Base de datos: 'proyecto_hospital'
+    -->
+    <database name="proyecto_hospital">
+        <!-- Tabla Cama -->
+        <!-- Tabla Historial -->
+        <!-- Tabla Historial_Ingreso -->
+        <!-- Tabla Hospital -->
+        <!-- Tabla Ingreso -->
+        <!-- Tabla Medico -->
+        <!-- Tabla Paciente -->
+    </database>
+</pma_xml_export>
